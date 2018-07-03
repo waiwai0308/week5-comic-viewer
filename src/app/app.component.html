@@ -18,26 +18,15 @@
         <i class="fas fa-caret-right"></i>
       </div>
       <div class="customer-select chapter-select" (click)="chapterSelect = !chapterSelect; pageSelect = false;">
-        chapter 1
+        chapter {{nowRead.chapter}}
         <ul class="select-option" *ngIf="chapterSelect">
-          <li class="is-active">chapter 1</li>
-          <li>chapter 2</li>
+          <li [ngClass]="item.chapter == nowRead.chapter?'is-active':''" *ngFor="let item of comicData.book" (click)="changeChapter(item.chapter,'')">chapter {{item.chapter}}</li>
         </ul>
       </div>
       <div class="customer-select page-select" (click)="pageSelect = !pageSelect; chapterSelect = false;">
-        Page 1
+        Page {{nowRead.page}}
         <ul class="select-option" *ngIf="pageSelect">
-          <li class="is-active">Page 1</li>
-          <li>Page 2</li>
-          <li>Page 3</li>
-          <li>Page 4</li>
-          <li>Page 5</li>
-          <li>Page 6</li>
-          <li>Page 7</li>
-          <li>Page 8</li>
-          <li>Page 9</li>
-          <li>Page 10</li>
-          <li>Page 11</li>
+          <li [ngClass]="(i + 1) == nowRead.page?'is-active':''" *ngFor="let item of readPage; let i = index" (click)="changePage(i + 1)">Page {{i + 1}}</li>
         </ul>
       </div>
 
@@ -53,13 +42,13 @@
     </div>
 
     <div class="comic-body">
-      <div class="comic-back">
+      <div class="comic-back" [ngClass]="nowRead.page == 1 && comicData.book.length > nowRead.chapter?'is-last':''" (click)="changePage('-1')">
         <i class="fas fa-chevron-left fa-3x"></i>
       </div>
       <div class="comic-pic">
-        <img src="assets/storyboard-1.png" width="100%" alt="" srcset="">
+        <img [src]="readPage[nowRead.page - 1]" width="100%" alt="" srcset="">
       </div>
-      <div class="comic-next">
+      <div class="comic-next" [ngClass]="nowRead.page == readPage.length && comicData.book.length == nowRead.chapter?'is-last':''" (click)="changePage('+1')">
         <i class="fas fa-chevron-right fa-3x"></i>
       </div>
     </div>
@@ -83,39 +72,36 @@
 
     <div class="comic-box">
       <div class="comic-img">
-        <img src="assets/comiccover.png" alt="" srcset="">
+        <img [src]="comicData.img" alt="" srcset="">
       </div>
       <div class="comic-content">
-        <div class="comic-title">MY HEXSCHOOL</div>
+        <div class="comic-title">{{comicData.name}}</div>
         <div class="comic-info">
           <div class="info-list">
             <div class="info-list-title">Genres</div>
-            <div class="info-list-text">Fusce/vehicula/dolor</div>
+            <div class="info-list-text">{{comicData.generes}}</div>
           </div>
           <div class="info-list">
             <div class="info-list-title">Author</div>
-            <div class="info-list-text">Namae Shiranai</div>
+            <div class="info-list-text">{{comicData.author}}</div>
           </div>
           <div class="info-list">
             <div class="info-list-title">Status</div>
-            <div class="info-list-text">Ongoing</div>
+            <div class="info-list-text">{{comicData.status}}</div>
           </div>
           <div class="info-list">
             <div class="info-list-title">Rate</div>
             <div class="info-list-text">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="far fa-star"></i>
-              <i class="far fa-star"></i>
+              <i class="fa-star" [ngClass]="comicData.rate >= 1?'fas':'far'"></i>
+              <i class="fa-star" [ngClass]="comicData.rate >= 2?'fas':'far'"></i>
+              <i class="fa-star" [ngClass]="comicData.rate >= 3?'fas':'far'"></i>
+              <i class="fa-star" [ngClass]="comicData.rate >= 4?'fas':'far'"></i>
+              <i class="fa-star" [ngClass]="comicData.rate >= 5?'fas':'far'"></i>
             </div>
           </div>
           <div class="info-content">
             <div class="info-content-title">Summary</div>
-            <div class="info-content-text">
-              <p>If your banker breaks, you snap; if your apothecary by mistake sends you poison in your pills, you die.</p>
-              <p>Therefore, I say, I saw that this situation of mine was the precise situation of every mortal that has this
-                Siamese connexion with a plurality of other mortals.</p>
+            <div class="info-content-text" [innerHtml]="comicData.summary">
             </div>
           </div>
         </div>
@@ -131,13 +117,8 @@
     <div class="chapter">
       <div class="chapter-title">All Chapters</div>
       <ul class="chapter-content">
-        <li class="chapter-list">
-          <a href="">Chapter 1: The F2E Challenge Start!</a>
-        </li>
-        <li class="chapter-list">
-          <a href="">Chapter 2: Todo List is Going Crazy!
-            <span class="chapter-tag">NEW</span>
-          </a>
+        <li class="chapter-list" *ngFor="let item of comicData.book">
+          <a href="">{{item.title}}<span class="chapter-tag" *ngIf="item.status == 'latest'">NEW</span></a>
         </li>
       </ul>
     </div>
